@@ -21,8 +21,11 @@ function copy404Plugin() {
 
 // https://vitejs.dev/config/
 // Para GitHub Pages: base debe ser '/nombre-repo/' (ej: '/future-birth-blueprint/')
+// En producción usamos el base del repo por defecto para que el build funcione en GitHub Pages
 export default defineConfig(({ mode }) => ({
-  base: process.env.VITE_BASE_PATH || "/",
+  base:
+    process.env.VITE_BASE_PATH ||
+    (mode === "production" ? "/future-birth-blueprint/" : "/"),
   server: {
     host: "::",
     port: 8080,
