@@ -1,12 +1,14 @@
-import { useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useState, useMemo } from "react";
+import { NavLink, useNavigate, useLocation, Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import {
   Menu, X, FlaskConical, Dna, Baby,
   BookOpen, AlertTriangle,
-  Home,
-  Github
+  Github,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
+import TableOfContents from "./TableOfContents";
 
 const sections = [
   {
@@ -21,9 +23,6 @@ const sections = [
     items: [
       { title: "Biological Explanation", path: "/ivg/biological", icon: Dna },
       { title: "Technical Approach", path: "/ivg/technical", icon: Dna },
-      { title: "Current Overview", path: "/ivg/current", icon: Dna },
-      { title: "Technologies used", path: "/ivg/technologies", icon: Dna },
-      { title: "Limiting regulations", path: "/ivg/regulations", icon: Dna },
     ],
   },
   {
@@ -31,9 +30,6 @@ const sections = [
     items: [
       { title: "Biological Explanation", path: "/ivf/biological", icon: FlaskConical },
       { title: "Technical Approach", path: "/ivf/technical", icon: FlaskConical },
-      { title: "Current Overview", path: "/ivf/current", icon: FlaskConical },
-      { title: "Technologies used", path: "/ivf/technologies", icon: FlaskConical },
-      { title: "Limiting regulations", path: "/ivf/regulations", icon: FlaskConical },
     ],
   },
   {
@@ -41,16 +37,27 @@ const sections = [
     items: [
       { title: "Biological Explanation", path: "/artificial-wombs/biological", icon: Baby },
       { title: "Technical Approach", path: "/artificial-wombs/technical", icon: Baby },
-      { title: "Current Overview", path: "/artificial-wombs/current", icon: Baby },
-      { title: "Technologies used", path: "/artificial-wombs/technologies", icon: Baby },
-      { title: "Limiting regulations", path: "/artificial-wombs/regulations", icon: Baby },
     ],
   },
 ];
 
+const flatPages = sections.flatMap((s) =>
+  s.items.map((item) => ({ path: item.path, title: item.title }))
+);
+
 export default function DocsLayout({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const { prev, next } = useMemo(() => {
+    const idx = flatPages.findIndex((p) => p.path === location.pathname);
+    if (idx < 0) return { prev: null, next: null };
+    return {
+      prev: idx > 0 ? flatPages[idx - 1] : null,
+      next: idx >= 0 && idx < flatPages.length - 1 ? flatPages[idx + 1] : null,
+    };
+  }, [location.pathname]);
+
   return (
     <div className="flex min-h-screen w-full bg-background">
       {/* Mobile toggle */}
@@ -113,7 +120,7 @@ export default function DocsLayout({ children }: { children: React.ReactNode }) 
         </p>
               
         <a 
-          href="https://github.com/perejover/artificial-birth" 
+          href="https://github.com/perejover/Artificial-birth-overview" 
           className="flex items-center gap-2 p-1 rounded-md transition-colors hover:bg-sidebar-accent group"
         >
           <Github className="h-5 w-5  text-muted-foreground group-hover:text-primary" />
@@ -126,8 +133,48 @@ export default function DocsLayout({ children }: { children: React.ReactNode }) 
 
       {/* Main content */}
       <main className="flex-1 min-w-0 md:ml-0">
-        <div className="max-w-4xl mx-auto px-6 md:px-12 py-12 md:py-16">
-          {children}
+        <div className="max-w-7xl mx-auto px-6 md:px-12 py-12 md:py-16">
+          <div className="flex gap-8">
+            <div className="flex-1 min-w-0 max-w-4xl">
+              {children}
+            </div>
+            <div className="hidden xl:flex w-64 flex-shrink-0 sticky top-24 self-start flex-col gap-4">
+              {(prev || next) && (
+                <nav
+                  className="flex items-center justify-between gap-2 border-l border-border pl-6 py-2"
+                  aria-label="Page navigation"
+                >
+                  {prev ? (
+                    <Link
+                      to={prev.path}
+                      className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors group"
+                    >
+                      <ChevronLeft className="h-4 w-4 shrink-0" />
+                      <span className="truncate max-w-[7rem]" title={prev.title}>
+                        {prev.title}
+                      </span>
+                    </Link>
+                  ) : (
+                    <span />
+                  )}
+                  {next ? (
+                    <Link
+                      to={next.path}
+                      className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors group ml-auto"
+                    >
+                      <span className="truncate max-w-[7rem] text-right" title={next.title}>
+                        {next.title}
+                      </span>
+                      <ChevronRight className="h-4 w-4 shrink-0" />
+                    </Link>
+                  ) : (
+                    <span />
+                  )}
+                </nav>
+              )}
+              <TableOfContents />
+            </div>
+          </div>
         </div>
       </main>
     </div>
