@@ -34,7 +34,7 @@ jobs:
       - name: Build for GitHub Pages
         run: npm run build
         env:
-          VITE_BASE_PATH: /future-birth-blueprint/
+          VITE_BASE_PATH: /Artificial-birth-overview/
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
