@@ -62,7 +62,24 @@ This project is built with:
 
 ## How can I deploy this project?
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+**GitHub Pages**
+
+El proyecto está configurado para desplegarse en GitHub Pages:
+
+1. En el repositorio: **Settings → Pages → Build and deployment**, elige **Source: GitHub Actions**.
+2. Cada push a la rama `main` ejecuta el workflow y publica la app en:
+   - `https://<tu-usuario>.github.io/future-birth-blueprint/`
+
+Para probar el build localmente como en GitHub Pages:
+
+```sh
+VITE_BASE_PATH=/future-birth-blueprint/ npm run build
+npm run preview
+```
+
+**Lovable**
+
+También puedes abrir [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) y usar Share → Publish.
 
 ## Can I connect a custom domain to my Lovable project?
 
